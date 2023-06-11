@@ -61,8 +61,7 @@ class Hotbar : UIElement {
 		// draw outline on selected item
 		SDL_SetRenderDrawColor(
 			game.renderer, hotbarForeColour.r, hotbarForeColour.g,
-			hotbarForeColour.b,
-			cast(ubyte) (abs(sin(cast(float) game.frames / 10.0)) * 255.0)
+			hotbarForeColour.b, hotbarForeColour.a
 		);
 
 		auto outlineRect = SDL_Rect(
