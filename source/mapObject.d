@@ -28,6 +28,10 @@ class Map : TileMap {
 					tilePos.y + tileSize.y
 				);
 
+				if (tiles[y][x].id == 0) {
+					continue;
+				}
+
 				auto res = parent.GetResolution();
 
 				if (
@@ -81,6 +85,36 @@ class Map : TileMap {
 						break;
 					}
 					default: assert(0);
+				}
+
+				SDL_SetRenderDrawColor(parent.renderer, 255, 255, 255, 255);
+
+				if ((x > 0) && (tiles[y][x - 1].id == 0)) {
+					SDL_RenderDrawLine(
+						parent.renderer, rect.x, rect.y, rect.x,
+						(rect.y + rect.h) - 1
+					);
+				}
+
+				if ((y > 0) && (tiles[y - 1][x].id == 0)) {
+					SDL_RenderDrawLine(
+						parent.renderer, rect.x, rect.y,
+						(rect.x + rect.w) - 1, rect.y
+					);
+				}
+
+				if ((x < tiles[y].length - 1) && (tiles[y][x + 1].id == 0)) {
+					SDL_RenderDrawLine(
+						parent.renderer, (rect.x + rect.w) - 1, rect.y,
+						(rect.x + rect.w) - 1, (rect.y + rect.h) - 1
+					);
+				}
+
+				if ((y < tiles.length - 1) && (tiles[y + 1][x].id == 0)) {
+					SDL_RenderDrawLine(
+						parent.renderer, rect.x, (rect.y + rect.h) - 1,
+						(rect.x + rect.w) - 1, (rect.y + rect.h) - 1
+					);
 				}
 			}
 		}
