@@ -1,0 +1,16 @@
+.dub
+docs.json
+__dummy.html
+docs/
+/ycraft
+ycraft.so
+ycraft.dylib
+ycraft.dll
+ycraft.a
+ycraft.lib
+ycraft-test-*
+*.exe
+*.pdb
+*.o
+*.obj
+*.lst
