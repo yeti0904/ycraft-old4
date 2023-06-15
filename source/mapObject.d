@@ -1,5 +1,6 @@
 module ycraft.mapObject;
 
+import std.algorithm;
 import ysge.project;
 import ysge.objects.tileMap;
 import ycraft.scenes.game;
@@ -12,13 +13,27 @@ class Map : TileMap {
 	}
 
 	override void Render(Project parent) {
+		auto camera = parent.currentScene.camera;
+
+		auto size = Vec2!ulong(tiles[0].length, tiles.length);
+	
 		Vec2!int start = Vec2!int(
 			pos.x - parent.currentScene.camera.x,
 			pos.y - parent.currentScene.camera.y
 		);
 
-		for (int y = 0; y < tiles.length; ++ y) {
-			for (int x = 0; x < tiles[0].length; ++ x) {
+		Vec2!int startPos = Vec2!int(
+			max(camera.x / tileSize.x, 0),
+			max(camera.y / tileSize.y, 0)
+		);
+
+		Vec2!int endPos = Vec2!int(
+			min(startPos.x + (parent.GetResolution().x / tileSize.x) + 2, size.x),
+			min(startPos.y + (parent.GetResolution().y / tileSize.y) + 2, size.x)
+		);
+
+		for (int y = startPos.y; y < endPos.y; ++ y) {
+			for (int x = startPos.x; x < endPos.x; ++ x) {
 				Vec2!int tilePos = Vec2!int(
 					start.x + (x * tileSize.x),
 					start.y + (y * tileSize.y)
@@ -34,7 +49,7 @@ class Map : TileMap {
 
 				auto res = parent.GetResolution();
 
-				if (
+				/*if (
 					(tileEnd.x < 0) ||
 					(tileEnd.y < 0)
 				) {
@@ -42,11 +57,11 @@ class Map : TileMap {
 				}
 
 				if (
-					(tilePos.x > res.x) ||
-					(tilePos.y > res.y)
+					(tilePos.x > res.x / tileSize.x) ||
+					(tilePos.y > res.y / tileSize.y)
 				) {
 					break;
-				}
+				}*/
 
 				auto tile = cast(GameTile*) tiles[y][x];
 				auto def  = tileDefs[tile.id];
@@ -77,12 +92,37 @@ class Map : TileMap {
 							src  = new SDL_Rect();
 							*src = def.renderProps.crop;
 						}
-					
-						SDL_RenderCopyEx(
-							parent.renderer, def.render.texture.texture, src,
-							&rect, cast(double) tile.rotate * 90.0, null,
-							SDL_FLIP_NONE
-						);
+
+						// can someone fix it pls
+						//if (tile.rotate == 0) {
+							SDL_RenderCopy(
+								parent.renderer, def.render.texture.texture, src,
+								&rect
+							);
+						/*}
+						else {
+							SDL_RendererFlip flip;
+							switch (tile.rotate) {
+								case 1: {
+									flip = SDL_FLIP_HORIZONTAL;
+									break;
+								}
+								case 2: {
+									flip = SDL_FLIP_VERTICAL;
+									break;
+								}
+								case 3: {
+									flip = SDL_FLIP_HORIZONTAL | SDL_FLIP_VERTICAL;
+									break;
+								}
+								default: assert(0);
+							}
+						
+							SDL_RenderCopyEx(
+								parent.renderer, def.render.texture.texture, src,
+								&rect, 0, null, flip
+							);
+						}*/
 						break;
 					}
 					default: assert(0);

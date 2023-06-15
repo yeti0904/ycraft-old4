@@ -4,6 +4,7 @@
 	],
 	"copyright": "Copyright © 2023, yeti0904",
 	"dependencies": {
+		"fast_noise": "~>1.0.5",
 		"ysge": "~>1.2.11"
 	},
 	"description": "A 2D sandbox game",

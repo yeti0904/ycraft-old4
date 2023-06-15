@@ -7,12 +7,15 @@ import ysge.objects.tileMap;
 import ycraft.item;
 import ycraft.player;
 import ycraft.hotbarUI;
+import ycraft.generator;
 import ycraft.mapObject;
 
 enum GameBlocks {
 	Air,
 	Grass,
-	Stone
+	Stone,
+	Sand,
+	Water
 }
 
 struct GameTile {
@@ -21,7 +24,7 @@ struct GameTile {
 
 	this(int pid) {
 		id     = pid;
-		rotate = 1;
+		rotate = 0;
 	}
 
 	this(int pid, ubyte protate) {
@@ -61,13 +64,25 @@ class Game : Scene {
 		frontLayer.tileDefs[GameBlocks.Grass] = TileDef(
 			RenderType.Texture,
 			RenderValue(gameTextures),
-			RenderProps(true, SDL_Rect(0, 0, 16, 16)),
+			RenderProps(true, SDL_Rect(0x00, 0x00, 0x10, 0x10)),
 			true
 		);
 		frontLayer.tileDefs[GameBlocks.Stone] = TileDef(
 			RenderType.Texture,
 			RenderValue(gameTextures),
-			RenderProps(true, SDL_Rect(16, 0, 16, 16)),
+			RenderProps(true, SDL_Rect(0x10, 0x00, 0x10, 0x10)),
+			true
+		);
+		frontLayer.tileDefs[GameBlocks.Sand] = TileDef(
+			RenderType.Texture,
+			RenderValue(gameTextures),
+			RenderProps(true, SDL_Rect(0x20, 0x00, 0x10, 0x10)),
+			true
+		);
+		frontLayer.tileDefs[GameBlocks.Water] = TileDef(
+			RenderType.Texture,
+			RenderValue(gameTextures),
+			RenderProps(true, SDL_Rect(0x30, 0x00, 0x10, 0x10)),
 			true
 		);
 		frontLayer.tileSize = Vec2!int(16, 16);
@@ -81,6 +96,7 @@ class Game : Scene {
 		// create items
 		itemDefs.CreateBlock(this, 0, "Grass", GameBlocks.Grass);
 		itemDefs.CreateBlock(this, 1, "Stone", GameBlocks.Stone);
+		itemDefs.CreateBlock(this, 2, "Sand",  GameBlocks.Sand);
 
 		player.SetItem(4, 0, 0);
 		player.SetItem(4, 1, 1);
@@ -97,16 +113,19 @@ class Game : Scene {
 		frontLayer.SetSize(size);
 		backLayer.SetSize(size);
 
-		for (ulong y = 0; y < size.y; ++ y) {
-			for (ulong x = 0; x < size.x; ++ x) {
-				backLayer.tiles[y][x] = cast(Tile*) new GameTile(
-					cast(int) GameBlocks.Grass, cast(ubyte) uniform!"[]"(0, 3)
-				);
-				frontLayer.tiles[y][x] = cast(Tile*) new GameTile(GameBlocks.Air);
-			}
-		}
+		GenerateWorld(this, uniform!"[]"(0, 0x7FFFFFFF));
 
-		frontLayer.tiles[5][5] = new Tile(GameBlocks.Stone);
+		// spawn player
+		Vec2!ulong spawnPos;
+		do {
+			spawnPos = Vec2!ulong(
+				uniform(0, GetWorldSize().x),
+				uniform(0, GetWorldSize().y)
+			);
+		} while (backLayer.tiles[spawnPos.y][spawnPos.x].id != GameBlocks.Sand);
+
+		player.box.box.x = cast(int) spawnPos.x * 16;
+		player.box.box.y = cast(int) spawnPos.y * 16;
 	}
 
 	override void Update(Project parent) {
@@ -288,5 +307,9 @@ class Game : Scene {
 		else {
 			return null;
 		}
+	}
+
+	Vec2!ulong GetWorldSize() {
+		return Vec2!ulong(frontLayer.tiles[0].length, frontLayer.tiles.length);
 	}
 }

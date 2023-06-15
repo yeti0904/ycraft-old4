@@ -37,7 +37,7 @@ class TitleScreen : Scene {
 
 			game.SetScene(GameScenes.Game);
 			auto gameScene = cast(Game) game.scenes[GameScenes.Game];
-			gameScene.Generate(Vec2!ulong(128, 128));
+			gameScene.Generate(Vec2!ulong(512, 512));
 		};
 		playButton.rect.x = (res.x / 2) - (playButton.rect.w / 2);
 		playButton.rect.y = 110;
