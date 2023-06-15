@@ -2,11 +2,11 @@ module ycraft.app;
 
 import std.stdio;
 import std.format;
-import ycraft.info;
 import ysge.info;
 import ysge.project;
 import ycraft.scenes.game;
 import ycraft.scenes.titleScreen;
+import ycraft.info;
 
 enum GameScenes {
 	TitleScreen = 0,

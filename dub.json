@@ -4,7 +4,7 @@
 	],
 	"copyright": "Copyright © 2023, yeti0904",
 	"dependencies": {
-		"ysge": "~>1.2.10"
+		"ysge": "~>1.2.11"
 	},
 	"description": "A 2D sandbox game",
 	"license": "GPL-3.0-or-later",

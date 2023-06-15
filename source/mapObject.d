@@ -79,8 +79,9 @@ class Map : TileMap {
 						}
 					
 						SDL_RenderCopyEx(
-							parent.renderer, def.render.texture, src, &rect,
-							cast(double) tile.rotate * 90.0, null, SDL_FLIP_NONE
+							parent.renderer, def.render.texture.texture, src,
+							&rect, cast(double) tile.rotate * 90.0, null,
+							SDL_FLIP_NONE
 						);
 						break;
 					}

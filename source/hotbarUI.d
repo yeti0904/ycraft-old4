@@ -53,8 +53,8 @@ class Hotbar : UIElement {
 			auto itemDef = gameScene.itemDefs.GetDef(item.id);
 
 			SDL_RenderCopy(
-				game.renderer, gameScene.gameTextures, &itemDef.textureSource,
-				&itemRect
+				game.renderer, gameScene.gameTextures.texture,
+				&itemDef.textureSource, &itemRect
 			);
 		}
 

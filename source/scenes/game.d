@@ -31,11 +31,11 @@ struct GameTile {
 }
 
 class Game : Scene {
-	Map          frontLayer;
-	Map          backLayer;
-	Player       player;
-	SDL_Texture* gameTextures;
-	ItemManager  itemDefs;
+	Map         frontLayer;
+	Map         backLayer;
+	Player      player;
+	Texture     gameTextures;
+	ItemManager itemDefs;
 
 	override void Init(Project parent) {
 		// load textures
