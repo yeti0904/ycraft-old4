@@ -44,11 +44,6 @@ void GenerateWorld(Game game, int seed) {
 						GameBlocks.Grass, cast(ubyte) uniform!"[]"(0, 3)
 					);
 
-					if (uniform!"[]"(0, 50) == 25) {
-						game.frontLayer.tiles[y][x] = cast(Tile*) new GameTile(
-							GameBlocks.Rock
-						);
-					}
 					if (uniform!"[]"(0, 25) == 25) {
 						game.frontLayer.tiles[y][x] = cast(Tile*) new GameTile(
 							GameBlocks.Tree

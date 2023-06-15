@@ -7,6 +7,7 @@ import ycraft.scenes.game;
 
 class Map : TileMap {
 	bool drawOutlines;
+	bool drawShadows;
 
 	this(Vec2!ulong size) {
 		super(size);
@@ -94,6 +95,33 @@ class Map : TileMap {
 							*src = def.renderProps.crop;
 						}
 
+						if (drawShadows) {
+							SDL_SetTextureAlphaMod(
+								def.render.texture.texture, 25
+							);
+							SDL_SetTextureColorMod(
+								def.render.texture.texture, 0, 0, 0
+							);
+
+							auto shadowRect = rect;
+							foreach (i ; 0 .. 10) {
+								++ shadowRect.x;
+								++ shadowRect.y;
+
+								SDL_RenderCopy(
+									parent.renderer, def.render.texture.texture, src,
+									&shadowRect
+								);
+							}
+							
+							SDL_SetTextureAlphaMod(
+								def.render.texture.texture, 255
+							);
+							SDL_SetTextureColorMod(
+								def.render.texture.texture, 255, 255, 255
+							);
+						}
+						
 						// can someone fix it pls
 						//if (tile.rotate == 0) {
 							SDL_RenderCopy(
@@ -124,6 +152,7 @@ class Map : TileMap {
 								&rect, 0, null, flip
 							);
 						}*/
+
 						break;
 					}
 					default: assert(0);
@@ -195,10 +224,11 @@ class Map : TileMap {
 					];
 					auto src = SDL_Rect(0x40, 0x00, 0x10, 0x10);
 
+					SDL_SetRenderDrawColor(parent.renderer, 0, 0, 0, 80);
+
 					foreach (leaf ; leaves) {
 						leaf.x += 4;
 						leaf.y += 4;
-						SDL_SetRenderDrawColor(parent.renderer, 0, 0, 0, 80);
 						SDL_RenderFillRect(parent.renderer, &leaf);
 					}
 

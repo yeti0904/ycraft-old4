@@ -11,4 +11,8 @@ class Entity {
 	this(Game game) {
 		box = new SimpleBox(SDL_Rect(0, 0, 16, 16), game.gameTextures);
 	}
+
+	void Update(Game game) {
+		
+	}
 }

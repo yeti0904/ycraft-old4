@@ -16,7 +16,6 @@ enum GameBlocks {
 	Stone,
 	Sand,
 	Water,
-	Rock,
 	Tree,
 	Cactus
 }
@@ -94,12 +93,6 @@ class Game : Scene {
 			RenderProps(true, SDL_Rect(0x30, 0x00, 0x10, 0x10)),
 			true
 		);
-		frontLayer.tileDefs[GameBlocks.Rock] = TileDef(
-			RenderType.Texture,
-			RenderValue(gameTextures),
-			RenderProps(true, SDL_Rect(0x00, 0x10, 0x10, 0x10)),
-			true
-		);
 		frontLayer.tileDefs[GameBlocks.Tree] = TileDef(
 			RenderType.Texture,
 			RenderValue(gameTextures),
@@ -112,15 +105,15 @@ class Game : Scene {
 			RenderProps(true, SDL_Rect(0x60, 0x00, 0x10, 0x10)),
 			true
 		);
-		frontLayer.tileSize = Vec2!int(16, 16);
+		frontLayer.tileSize    = Vec2!int(16, 16);
+		frontLayer.drawShadows = true;
 
-		extraInfo[GameBlocks.Rock]   = ExtraTileInfo(false);
 		extraInfo[GameBlocks.Tree]   = ExtraTileInfo(false);
 		extraInfo[GameBlocks.Cactus] = ExtraTileInfo(false);
 
-		backLayer.tileDefs    = frontLayer.tileDefs;
-		backLayer.tileSize    = frontLayer.tileSize;
-		backLayer.doCollision = false;
+		backLayer.tileDefs     = frontLayer.tileDefs;
+		backLayer.tileSize     = frontLayer.tileSize;
+		backLayer.doCollision  = false;
 
 		itemDefs = new ItemManager();
 
