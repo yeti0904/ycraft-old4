@@ -12,8 +12,8 @@ class Player : Entity {
 	this(Game game) {
 		super(game);
 
-		health    = 100;
-		maxHealth = 100;
+		health    = 5;
+		maxHealth = 10;
 
 		inventory = new ItemStorage[][](5, 9);
 	}

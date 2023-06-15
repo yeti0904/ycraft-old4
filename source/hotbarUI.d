@@ -77,5 +77,30 @@ class Hotbar : UIElement {
 
 			SDL_RenderDrawRect(game.renderer, &outlineRect);
 		}
+
+		// hearts
+		auto fullHeart  = SDL_Rect(0, 480, 7, 6);
+		auto emptyHeart = SDL_Rect(7, 480, 7, 6);
+		auto player     = gameScene.player;
+
+		auto heartRect = SDL_Rect(
+			hotbarBack.x, hotbarBack.y - 8, 7, 6
+		);
+
+		for (uint i = 0; i < player.health; ++ i) {
+			SDL_RenderCopy(
+				project.renderer, gameScene.gameTextures.texture, &fullHeart,
+				&heartRect
+			);
+			heartRect.x += 7;
+		}
+
+		for (uint i = 0; i < player.maxHealth - player.health; ++ i) {
+			SDL_RenderCopy(
+				project.renderer, gameScene.gameTextures.texture, &emptyHeart,
+				&heartRect
+			);
+			heartRect.x += 7;
+		}
 	}
 }

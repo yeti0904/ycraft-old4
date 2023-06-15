@@ -15,7 +15,15 @@ enum GameBlocks {
 	Grass,
 	Stone,
 	Sand,
-	Water
+	Water,
+	Rock,
+	Tree,
+	Cactus
+}
+
+// extension for tile definitions
+struct ExtraTileInfo {
+	bool drawBorder;
 }
 
 struct GameTile {
@@ -34,11 +42,12 @@ struct GameTile {
 }
 
 class Game : Scene {
-	Map         frontLayer;
-	Map         backLayer;
-	Player      player;
-	Texture     gameTextures;
-	ItemManager itemDefs;
+	Map                frontLayer;
+	Map                backLayer;
+	Player             player;
+	Texture            gameTextures;
+	ItemManager        itemDefs;
+	ExtraTileInfo[int] extraInfo;
 
 	override void Init(Project parent) {
 		// load textures
@@ -85,7 +94,29 @@ class Game : Scene {
 			RenderProps(true, SDL_Rect(0x30, 0x00, 0x10, 0x10)),
 			true
 		);
+		frontLayer.tileDefs[GameBlocks.Rock] = TileDef(
+			RenderType.Texture,
+			RenderValue(gameTextures),
+			RenderProps(true, SDL_Rect(0x00, 0x10, 0x10, 0x10)),
+			true
+		);
+		frontLayer.tileDefs[GameBlocks.Tree] = TileDef(
+			RenderType.Texture,
+			RenderValue(gameTextures),
+			RenderProps(true, SDL_Rect(0x50, 0x00, 0x10, 0x10)),
+			true
+		);
+		frontLayer.tileDefs[GameBlocks.Cactus] = TileDef(
+			RenderType.Texture,
+			RenderValue(gameTextures),
+			RenderProps(true, SDL_Rect(0x60, 0x00, 0x10, 0x10)),
+			true
+		);
 		frontLayer.tileSize = Vec2!int(16, 16);
+
+		extraInfo[GameBlocks.Rock]   = ExtraTileInfo(false);
+		extraInfo[GameBlocks.Tree]   = ExtraTileInfo(false);
+		extraInfo[GameBlocks.Cactus] = ExtraTileInfo(false);
 
 		backLayer.tileDefs    = frontLayer.tileDefs;
 		backLayer.tileSize    = frontLayer.tileSize;
@@ -102,8 +133,8 @@ class Game : Scene {
 		player.SetItem(4, 1, 1);
 
 		AddObject(backLayer);
-		AddObject(frontLayer);
 		AddObject(player.box);
+		AddObject(frontLayer);
 
 		// set up UI
 		AddUI(new Hotbar());
@@ -122,7 +153,7 @@ class Game : Scene {
 				uniform(0, GetWorldSize().x),
 				uniform(0, GetWorldSize().y)
 			);
-		} while (backLayer.tiles[spawnPos.y][spawnPos.x].id != GameBlocks.Sand);
+		} while (backLayer.tiles[spawnPos.y][spawnPos.x].id != GameBlocks.Grass);
 
 		player.box.box.x = cast(int) spawnPos.x * 16;
 		player.box.box.y = cast(int) spawnPos.y * 16;
