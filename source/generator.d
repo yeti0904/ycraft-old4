@@ -27,7 +27,7 @@ void GenerateWorld(Game game, int seed) {
 
 			game.frontLayer.tiles[y][x] = cast(Tile*) new GameTile(GameBlocks.Air);
 
-			if (biome > 0.20) {
+			if (biome > 0.30) {
 				game.backLayer.tiles[y][x] = cast(Tile*) new GameTile(
 					GameBlocks.Sand, cast(ubyte) uniform!"[]"(0, 3)
 				);

@@ -71,18 +71,18 @@ class Map : TileMap {
 					tilePos.x, tilePos.y, tileSize.x, tileSize.y
 				);
 
-				switch (def.renderType) {
+				switch (def.render.type) {
 					case RenderType.Colour: {
-						if (def.render.colour.a == 0) {
+						if (def.render.value.colour.a == 0) {
 							break;
 						}
 						
 						SDL_SetRenderDrawColor(
 							parent.renderer,
-							def.render.colour.r,
-							def.render.colour.g,
-							def.render.colour.b,
-							def.render.colour.a
+							def.render.value.colour.r,
+							def.render.value.colour.g,
+							def.render.value.colour.b,
+							def.render.value.colour.a
 						);
 						SDL_RenderFillRect(parent.renderer, &rect);
 						break;
@@ -90,17 +90,17 @@ class Map : TileMap {
 					case RenderType.Texture: {
 						SDL_Rect* src;
 
-						if (def.renderProps.doCrop) {
+						if (def.render.props.doCrop) {
 							src  = new SDL_Rect();
-							*src = def.renderProps.crop;
+							*src = def.render.props.crop;
 						}
 
 						if (drawShadows) {
 							SDL_SetTextureAlphaMod(
-								def.render.texture.texture, 25
+								def.render.value.texture.texture, 25
 							);
 							SDL_SetTextureColorMod(
-								def.render.texture.texture, 0, 0, 0
+								def.render.value.texture.texture, 0, 0, 0
 							);
 
 							auto shadowRect = rect;
@@ -109,24 +109,25 @@ class Map : TileMap {
 								++ shadowRect.y;
 
 								SDL_RenderCopy(
-									parent.renderer, def.render.texture.texture, src,
+									parent.renderer,
+									def.render.value.texture.texture, src,
 									&shadowRect
 								);
 							}
 							
 							SDL_SetTextureAlphaMod(
-								def.render.texture.texture, 255
+								def.render.value.texture.texture, 255
 							);
 							SDL_SetTextureColorMod(
-								def.render.texture.texture, 255, 255, 255
+								def.render.value.texture.texture, 255, 255, 255
 							);
 						}
 						
 						// can someone fix it pls
 						//if (tile.rotate == 0) {
 							SDL_RenderCopy(
-								parent.renderer, def.render.texture.texture, src,
-								&rect
+								parent.renderer, def.render.value.texture.texture,
+								src, &rect
 							);
 						/*}
 						else {
@@ -224,17 +225,21 @@ class Map : TileMap {
 					];
 					auto src = SDL_Rect(0x40, 0x00, 0x10, 0x10);
 
-					SDL_SetRenderDrawColor(parent.renderer, 0, 0, 0, 80);
+					SDL_SetRenderDrawColor(parent.renderer, 0, 0, 0, 20);
 
 					foreach (leaf ; leaves) {
-						leaf.x += 4;
-						leaf.y += 4;
-						SDL_RenderFillRect(parent.renderer, &leaf);
+						leaf.x += 10;
+						leaf.y += 10;
+						foreach (i; 0 .. 10) {
+							++ leaf.x;
+							++ leaf.y;
+							SDL_RenderFillRect(parent.renderer, &leaf);
+						}
 					}
 
 					foreach (ref leaf ; leaves) {
 						SDL_RenderCopy(
-							parent.renderer, def.render.texture.texture,
+							parent.renderer, def.render.value.texture.texture,
 							&src, &leaf
 						);
 					}

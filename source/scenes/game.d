@@ -56,55 +56,32 @@ class Game : Scene {
 		);
 	
 		player = new Player(this);
-		player.box.renderProps = RenderProps(true, SDL_Rect(0, 496, 16, 16));
-		player.box.physicsOn = true;
 		CameraFollowObject(player.box);
+
+		// create walking animation
+		Animation walkingAnimation;
+		walkingAnimation.updateTicks = 15;
+		walkingAnimation.frames = [
+			RenderInfo(
+				RenderType.Texture, gameTextures, SDL_Rect(16, 496, 16, 16)
+			),
+			RenderInfo(
+				RenderType.Texture, gameTextures, SDL_Rect(24, 496, 16, 16)
+			)
+		];
 
 		frontLayer = new Map(Vec2!ulong(0, 0));
 		backLayer  = new Map(Vec2!ulong(0, 0));
 
-		frontLayer.tileDefs[GameBlocks.Air] = TileDef(
-			RenderType.Colour,
-			RenderValue(SDL_Color(0, 0, 0, 0)),
-			RenderProps(false, SDL_Rect(0, 0, 0, 0)),
-			false
-		);
-		frontLayer.tileDefs[GameBlocks.Grass] = TileDef(
-			RenderType.Texture,
-			RenderValue(gameTextures),
-			RenderProps(true, SDL_Rect(0x00, 0x00, 0x10, 0x10)),
-			true
-		);
-		frontLayer.tileDefs[GameBlocks.Stone] = TileDef(
-			RenderType.Texture,
-			RenderValue(gameTextures),
-			RenderProps(true, SDL_Rect(0x10, 0x00, 0x10, 0x10)),
-			true
-		);
-		frontLayer.tileDefs[GameBlocks.Sand] = TileDef(
-			RenderType.Texture,
-			RenderValue(gameTextures),
-			RenderProps(true, SDL_Rect(0x20, 0x00, 0x10, 0x10)),
-			true
-		);
-		frontLayer.tileDefs[GameBlocks.Water] = TileDef(
-			RenderType.Texture,
-			RenderValue(gameTextures),
-			RenderProps(true, SDL_Rect(0x30, 0x00, 0x10, 0x10)),
-			true
-		);
-		frontLayer.tileDefs[GameBlocks.Tree] = TileDef(
-			RenderType.Texture,
-			RenderValue(gameTextures),
-			RenderProps(true, SDL_Rect(0x50, 0x00, 0x10, 0x10)),
-			true
-		);
-		frontLayer.tileDefs[GameBlocks.Cactus] = TileDef(
-			RenderType.Texture,
-			RenderValue(gameTextures),
-			RenderProps(true, SDL_Rect(0x60, 0x00, 0x10, 0x10)),
-			true
-		);
+
+		MakeBlock(GameBlocks.Air,    false, SDL_Rect(0x00, 0x00, 0x00, 0x00));
+		MakeBlock(GameBlocks.Grass,  true,  SDL_Rect(0x00, 0x00, 0x10, 0x10));
+		MakeBlock(GameBlocks.Stone,  true,  SDL_Rect(0x10, 0x00, 0x10, 0x10));
+		MakeBlock(GameBlocks.Sand,   true,  SDL_Rect(0x20, 0x00, 0x10, 0x10));
+		MakeBlock(GameBlocks.Water,  true,  SDL_Rect(0x30, 0x00, 0x10, 0x10));
+		MakeBlock(GameBlocks.Tree,   true,  SDL_Rect(0x50, 0x00, 0x10, 0x10));
+		MakeBlock(GameBlocks.Cactus, true,  SDL_Rect(0x60, 0x00, 0x10, 0x10));
+		
 		frontLayer.tileSize    = Vec2!int(16, 16);
 		frontLayer.drawShadows = true;
 
@@ -133,6 +110,17 @@ class Game : Scene {
 		AddUI(new Hotbar());
 	}
 
+	void MakeBlock(int id, bool collides, SDL_Rect crop) {
+		frontLayer.tileDefs[id] = TileDef(
+			RenderInfo(
+				RenderType.Texture,
+				RenderValue(gameTextures),
+				RenderProps(true, crop)
+			),
+			collides
+		);
+	}
+
 	void Generate(Vec2!ulong size) {
 		frontLayer.SetSize(size);
 		backLayer.SetSize(size);
@@ -146,7 +134,7 @@ class Game : Scene {
 				uniform(0, GetWorldSize().x),
 				uniform(0, GetWorldSize().y)
 			);
-		} while (backLayer.tiles[spawnPos.y][spawnPos.x].id != GameBlocks.Grass);
+		} while (backLayer.tiles[spawnPos.y][spawnPos.x].id == GameBlocks.Water);
 
 		player.box.box.x = cast(int) spawnPos.x * 16;
 		player.box.box.y = cast(int) spawnPos.y * 16;
@@ -154,17 +142,24 @@ class Game : Scene {
 
 	override void Update(Project parent) {
 		// movement
+		bool moved;
 		if (parent.KeyPressed(SDL_SCANCODE_W)) {
 			player.box.MoveUp(this, 1);
+			moved = true;
 		}
 		if (parent.KeyPressed(SDL_SCANCODE_A)) {
 			player.box.MoveLeft(this, 1);
+			moved = true;
 		}
 		if (parent.KeyPressed(SDL_SCANCODE_S)) {
 			player.box.MoveDown(this, 1);
 		}
 		if (parent.KeyPressed(SDL_SCANCODE_D)) {
 			player.box.MoveRight(this, 1);
+		}
+
+		if (!moved) {
+			
 		}
 
 		// hotbar selection

@@ -26,7 +26,7 @@ class ItemManager {
 	void CreateBlock(Game game, int id, string name, uint blockID) {
 		defs[id] = ItemDef(
 			name, true, blockID,
-			game.frontLayer.tileDefs[blockID].renderProps.crop
+			game.frontLayer.tileDefs[blockID].render.props.crop
 		);
 	}
 

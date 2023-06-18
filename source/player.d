@@ -12,6 +12,9 @@ class Player : Entity {
 	this(Game game) {
 		super(game);
 
+		box.render.props = RenderProps(true, SDL_Rect(0, 496, 16, 16));
+		box.physicsOn    = true;
+
 		health    = 5;
 		maxHealth = 10;
 
