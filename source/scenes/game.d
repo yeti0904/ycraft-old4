@@ -20,6 +20,11 @@ enum GameBlocks {
 	Cactus
 }
 
+enum GameAnimations {
+	PlayerWalking,
+	PlayerStationary
+}
+
 // extension for tile definitions
 struct ExtraTileInfo {
 	bool drawBorder;
@@ -63,12 +68,32 @@ class Game : Scene {
 		walkingAnimation.updateTicks = 15;
 		walkingAnimation.frames = [
 			RenderInfo(
-				RenderType.Texture, gameTextures, SDL_Rect(16, 496, 16, 16)
+				RenderType.Texture,
+				RenderValue(gameTextures),
+				RenderProps(true, SDL_Rect(16, 496, 16, 16))
 			),
 			RenderInfo(
-				RenderType.Texture, gameTextures, SDL_Rect(24, 496, 16, 16)
+				RenderType.Texture,
+				RenderValue(gameTextures),
+				RenderProps(true, SDL_Rect(32, 496, 16, 16))
 			)
 		];
+		animations.animations[GameAnimations.PlayerWalking] = walkingAnimation;
+
+		// create stationary animation
+		Animation stationaryAnimation;
+		stationaryAnimation.updateTicks = 0xFFFFFFFF;
+		stationaryAnimation.frames = [
+			RenderInfo(
+				RenderType.Texture,
+				RenderValue(gameTextures),
+				RenderProps(true, SDL_Rect(0, 496, 16, 16))
+			)
+		];
+		animations.animations[GameAnimations.PlayerStationary] = stationaryAnimation;
+		animations.StartAnimation(
+			&player.box.render, GameAnimations.PlayerStationary
+		);
 
 		frontLayer = new Map(Vec2!ulong(0, 0));
 		backLayer  = new Map(Vec2!ulong(0, 0));
@@ -153,13 +178,28 @@ class Game : Scene {
 		}
 		if (parent.KeyPressed(SDL_SCANCODE_S)) {
 			player.box.MoveDown(this, 1);
+			moved = true;
 		}
 		if (parent.KeyPressed(SDL_SCANCODE_D)) {
 			player.box.MoveRight(this, 1);
+			moved = true;
 		}
 
-		if (!moved) {
-			
+		if (
+			moved && !animations.IsAnimationRunning(GameAnimations.PlayerWalking)
+		) {
+			animations.StopAnimation(GameAnimations.PlayerStationary);
+			animations.StartAnimation(
+				&player.box.render, GameAnimations.PlayerWalking
+			);
+		}
+		if (
+			!moved && animations.IsAnimationRunning(GameAnimations.PlayerWalking)
+		) {
+			animations.StopAnimation(GameAnimations.PlayerWalking);
+			animations.StartAnimation(
+				&player.box.render, GameAnimations.PlayerStationary
+			);
 		}
 
 		// hotbar selection
